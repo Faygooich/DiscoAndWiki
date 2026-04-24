@@ -1,0 +1,1266 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Disco&amp;Wiki</title>
+<link rel="icon" type="image/png" href="icon.png">
+<style>
+@font-face {
+    font-family: 'DW';
+    src: url('font.ttf') format('truetype');
+    font-display: block;
+}
+#scanlines{ position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index:10; }
+:root {
+    --bg:         #000000;
+    --bg-alt:     #000000;
+    --bg-inset:   #000000;
+    --bg-warm:    #000000;
+    --border:     #ffffff;
+    --border-hi:  #ffffff;
+    --fg:         #ffffff;
+    --fg-dim:     #ffffff;
+    --fg-mute:    #ffffff;
+    --gold:       #C70F0F;
+    --amber:      #C70F0F;
+    --cyan:       #C70F0F;
+    --pink:       #C70F0F;
+    --red:        #C70F0F;
+    --green:      #C70F0F;
+    --light:      #FFB100;   /* светлый акцент */
+    --dark:       #9F3EA6;   /* темный акцент */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'DW', 'Courier New', monospace;
+    -webkit-font-smoothing: none;
+    -moz-osx-font-smoothing: none;
+    font-smooth: never;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
+}
+
+html, body { height: 100%; overflow: hidden; }
+
+body {
+    background: var(--bg);
+    color: var(--fg);
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+
+/* ─── Layout ──────────────────────────────────────── */
+.layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    height: 100vh;
+}
+
+/* ─── Sidebar ─────────────────────────────────────── */
+.sidebar {
+    background: var(--bg-alt);
+    border-right: 3px solid var(--border);
+    overflow-y: auto;
+    padding: 20px 18px;
+    display: flex;
+    flex-direction: column;
+}
+
+.logo {
+    border: 3px solid var(--gold);
+    background: var(--bg-inset);
+    padding: 1px 10px;
+    text-align: center;
+    box-shadow: 5px 5px 0 var(--border);
+    margin-bottom: 6px;
+    position: relative;
+}
+.logo-title {
+    font-size: 22px;
+    letter-spacing: 1px;
+    color: var(--fg);
+    line-height: 1.1;
+}
+.logo-disco { color: var(--gold); }
+.logo-amp {
+    color: var(--pink);
+    font-size: 18px;
+    margin: 0 4px;
+}
+.logo-wiki { color: var(--cyan); }
+.logo-sub {
+    margin-top: 6px;
+    font-size: 10px;
+    color: var(--fg-mute);
+    letter-spacing: 2px;
+}
+
+.sidebar-tag {
+    margin: 22px 0 8px;
+    font-size: 11px;
+    color: var(--fg-mute);
+    letter-spacing: 1px;
+}
+
+nav { display: flex; flex-direction: column; gap: 4px; }
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 10px;
+    border: 2px solid transparent;
+    background: transparent;
+    color: var(--fg-dim);
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1.3;
+    width: 100%;
+    transition: none;
+}
+.nav-item:hover:not(.disabled) {
+    color: var(--fg);
+    background: var(--bg-inset);
+    border-color: var(--border);
+}
+.nav-item.active {
+    color: var(--bg-inset);
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 3px 3px 0 var(--border);
+    font-weight: bold;
+}
+.nav-item.disabled {
+    color: var(--fg-mute);
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+.nav-num {
+    display: inline-block;
+    min-width: 28px;
+    padding: 2px 4px;
+    text-align: center;
+    background: var(--bg-inset);
+    color: var(--cyan);
+    font-size: 10px;
+    border: 1px solid var(--border);
+}
+.nav-item.active .nav-num {
+    background: var(--bg-inset);
+    color: var(--gold);
+    border-color: var(--bg-inset);
+}
+.nav-item.disabled .nav-num {
+    color: var(--fg-mute);
+    background: transparent;
+}
+.nav-title { flex: 1; }
+
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: 20px;
+    font-size: 10px;
+    color: var(--fg-mute);
+    letter-spacing: 1px;
+    border-top: 1px dashed var(--border);
+    text-align: center;
+}
+
+/* ─── Content ─────────────────────────────────────── */
+.content {
+    overflow-y: auto;
+    padding: 32px 48px 80px;
+    position: relative;
+}
+
+.article { display: none; max-width: 920px; }
+.article.visible { display: block; }
+
+.breadcrumb {
+    font-size: 11px;
+    color: var(--fg-mute);
+    letter-spacing: 1px;
+    margin-bottom: 14px;
+}
+.breadcrumb span { color: var(--cyan); }
+
+h1.art-title {
+    font-size: 30px;
+    color: var(--fg);
+    line-height: 1.1;
+    margin-bottom: 8px;
+    padding-bottom: 14px;
+    border-bottom: 3px solid var(--gold);
+    position: relative;
+}
+h1.art-title::after {
+    content: '';
+    position: absolute;
+    bottom: -9px;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--pink);
+}
+.art-sub {
+    color: var(--fg-dim);
+    font-size: 14px;
+    margin-bottom: 32px;
+    margin-top: 10px;
+}
+
+h2.sec-title {
+    font-size: 18px;
+    color: var(--gold);
+    margin: 40px 0 16px;
+    padding: 8px 12px;
+    background: var(--bg-alt);
+    border-left: 4px solid var(--gold);
+    letter-spacing: 1px;
+}
+h2.sec-title.light { color: var(--light); border-left-color: var(--light); }
+h2.sec-title.dark  { color: var(--dark);  border-left-color: var(--dark); }
+h2.sec-title.info  { color: var(--cyan);  border-left-color: var(--cyan); }
+
+h3.sub-title {
+    font-size: 15px;
+    color: var(--fg);
+    margin: 22px 0 10px;
+    padding-left: 8px;
+    border-left: 2px solid var(--border-hi);
+}
+
+p { margin-bottom: 12px; color: #ffffff; }
+p.dim { color: #ffffff; font-size: 13px; }
+
+/* ─── Steps ───────────────────────────────────────── */
+.steps { display: flex; flex-direction: column; gap: 14px; margin: 18px 0; }
+.step {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 14px;
+    background: var(--bg-alt);
+    border: 2px solid var(--border);
+    padding: 14px 16px;
+    box-shadow: 4px 4px 0 var(--bg-inset);
+}
+.step-num {
+    background: var(--gold);
+    color: var(--bg-inset);
+    font-size: 22px;
+    text-align: center;
+    padding: 6px 0;
+    align-self: start;
+    font-weight: bold;
+    box-shadow: 2px 2px 0 var(--border);
+}
+.step-body { font-size: 14px; line-height: 1.55; }
+.step-body strong { color: var(--gold); }
+.step-body .sub { color: var(--fg-dim); font-size: 12px; margin-top: 4px; display: block; }
+.step.dark .step-num { background: var(--dark); }
+.step.dark .step-body strong { color: var(--dark); }
+.step.light .step-num { background: var(--light); }
+.step.light .step-body strong { color: var(--light); }
+
+/* ─── Command box ─────────────────────────────────── */
+.cmd {
+    display: flex;
+    align-items: stretch;
+    margin: 10px 0;
+    border: 2px solid var(--green);
+    background: var(--bg-inset);
+    box-shadow: 4px 4px 0 var(--border);
+    max-width: 420px;
+}
+.cmd-light {
+    display: flex;
+    align-items: stretch;
+    margin: 10px 0;
+    border: 2px solid var(--light);
+    background: var(--bg-inset);
+    box-shadow: 2px 2px 0 var(--border);
+    max-width: 420px;
+}
+.cmd-prompt {
+    background: var(--green);
+    color: var(--bg-inset);
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border-right: 2px solid var(--green);
+}
+.cmd-prompt-light {
+    background: var(--light);
+    color: var(--bg-inset);
+    padding: 8px 10px;
+    font-size: 13px;
+    font-weight: bold;
+    border-right: 2px solid var(--light);
+}
+.cmd-text {
+    flex: 1;
+    padding: 8px 12px;
+    color: var(--green);
+    font-size: 14px;
+    background: var(--bg-inset);
+    user-select: all;
+}
+.cmd-copy {
+    background: transparent;
+    color: var(--green);
+    border: none;
+    border-left: 2px solid var(--green);
+    padding: 0 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+.cmd-copy-light {
+    background: transparent;
+    color: var(--light);
+    border: none;
+    border-left: 2px solid var(--light);
+    padding: 0 14px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 11px;
+    letter-spacing: 1px;
+}
+.cmd-copy:hover { background: var(--green); color: var(--bg-inset); }
+.cmd-copy.copied { background: var(--green); color: var(--bg-inset); }
+
+/* ─── Callouts ────────────────────────────────────── */
+.callout {
+    display: grid;
+    grid-template-columns: 44px 1fr;
+    gap: 12px;
+    margin: 18px 0;
+    padding: 12px 14px;
+    border: 2px solid var(--red);
+    background: var(--bg-warm);
+    box-shadow: 2px 2px 0 var(--border);
+}
+.callout.info { border-color: var(--cyan); background: #000000; }
+.callout.warn { border-color: var(--amber); background: #000000; }
+.callout-icon {
+    font-size: 22px;
+    text-align: center;
+    padding-top: 2px;
+    color: var(--red);
+}
+.callout.info .callout-icon { color: var(--cyan); }
+.callout.warn .callout-icon { color: var(--amber); }
+.callout-body { font-size: 13px; line-height: 1.55; }
+.callout-body b { color: var(--red); }
+.callout.info .callout-body b { color: var(--cyan); }
+.callout.warn .callout-body b { color: var(--amber); }
+
+/* ─── Grids & boxes ───────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 14px 0; }
+
+.box {
+    background: var(--bg-alt);
+    border: 2px solid var(--border);
+    padding: 12px 14px;
+    box-shadow: 4px 4px 0 var(--bg-inset);
+}
+.box-title {
+    font-size: 12px;
+    color: var(--gold);
+    margin-bottom: 8px;
+    letter-spacing: 1px;
+}
+.box ul { list-style: none; padding: 0; }
+.box li {
+    padding: 3px 0;
+    font-size: 13px;
+    color: var(--fg);
+    position: relative;
+    padding-left: 16px;
+}
+.box li::before {
+    content: '▪';
+    position: absolute;
+    left: 0;
+    color: #dc75d1;
+}
+
+/* Locations list with numbers */
+.loc-list { display: flex; flex-direction: column; gap: 8px; margin: 14px 0; }
+.loc {
+    display: grid;
+    grid-template-columns: 38px 1fr;
+    align-items: center;
+    background: var(--bg-alt);
+    border: 2px solid var(--border);
+    padding: 8px 12px;
+    gap: 12px;
+}
+.loc-num {
+    text-align: center;
+    color: var(--pink);
+    font-size: 16px;
+    background: var(--bg-inset);
+    padding: 4px 0;
+    border: 1px solid var(--border);
+}
+.loc-name { background: var(--bg-inset); font-size: 13px; }
+.loc-name b { color: var(--fg); }
+.loc-name .tag { color: var(--fg-dim); font-size: 11px; margin-left: 4px; }
+
+/* Checklist */
+.checklist { margin: 14px 0; }
+.check {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    border: 1px dashed var(--border);
+    margin-bottom: 6px;
+    background: var(--bg-alt);
+    font-size: 13px;
+}
+.check .mark {
+    color: var(--cyan);
+    font-weight: bold;
+    flex-shrink: 0;
+}
+.check-dark {
+    display: flex;
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    border: 1px dashed var(--border);
+    margin-bottom: 6px;
+    background: var(--bg-alt);
+    font-size: 13px;
+}
+.check-dark .mark-dark {
+    color: var(--dark);
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+/* ─── Character sheet ─────────────────────────────── */
+.char-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-top: 24px;
+}
+@media (max-width: 860px) { .char-pair { grid-template-columns: 1fr; } }
+
+.char {
+    border: 3px solid var(--gold);
+    background: var(--bg-alt);
+    box-shadow: 6px 6px 0 var(--bg-inset);
+}
+.char.dark { border-color: var(--dark); }
+.char.light { border-color: var(--light); }
+
+.char-head {
+    padding: 14px 16px;
+    background: var(--bg-inset);
+    border-bottom: 3px solid var(--gold);
+}
+.char.dark .char-head { border-bottom-color: var(--dark); }
+.char.light .char-head { border-bottom-color: var(--light); }
+.char-badge {
+    display: inline-block;
+    padding: 3px 9px;
+    background: var(--gold);
+    color: var(--bg-inset);
+    font-size: 10px;
+    letter-spacing: 2px;
+    margin-bottom: 6px;
+    box-shadow: 2px 2px 0 var(--border);
+}
+.char.dark .char-badge { background: var(--dark); }
+.char.light .char-badge { background: var(--light); }
+.char-name {
+    font-size: 22px;
+    color: var(--fg);
+    line-height: 1;
+    margin-bottom: 4px;
+}
+.char-subname {
+    font-size: 11px;
+    color: var(--fg-dim);
+    letter-spacing: 1px;
+}
+
+.char-body { padding: 14px 16px; }
+.char-sec { margin-bottom: 16px; }
+.char-sec-title {
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px dashed var(--border);
+}
+.char.dark .char-sec-title { color: var(--dark); }
+.char.light .char-sec-title { color: var(--light); }
+
+.kv {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    padding: 2px 0;
+}
+.kv .k { color: var(--fg-dim); }
+.kv .v { color: var(--fg); text-align: right; }
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4px;
+}
+.stat {
+    background: var(--bg-inset);
+    border: 2px solid var(--border);
+    text-align: center;
+    padding: 6px 2px;
+}
+.stat.bump { border-color: var(--dark); }
+.stat-lbl {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--cyan);
+}
+.stat-lbl-dark {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--dark);
+}
+.stat-lbl-light {
+    font-size: 9px;
+    letter-spacing: 1px;
+    color: var(--light);
+}
+.stat-val {
+    font-size: 20px;
+    color: var(--fg);
+    line-height: 1;
+    margin: 2px 0;
+}
+.stat-mod {
+    font-size: 10px;
+    color: var(--fg-dim);
+}
+.stat.bump .stat-mod::after {
+    content: ' ↑';
+    color: var(--dark);
+}
+
+.pill-row { display: flex; flex-wrap: wrap; gap: 4px; }
+.pill {
+    display: inline-block;
+    padding: 3px 8px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    color: var(--fg);
+    font-size: 11px;
+}
+.pill.gold { color: var(--light); border-color: var(--light); }
+
+.ability {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--bg-inset);
+    border-left: 3px solid var(--cyan);
+    font-size: 12px;
+}
+.ability-dark {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--bg-inset);
+    border-left: 3px solid var(--dark);
+    font-size: 12px;
+}
+.ability-light {
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--bg-inset);
+    border-left: 3px solid var(--light);
+    font-size: 12px;
+}
+.ability-name { color: var(--cyan); margin-bottom: 3px; }
+.char.dark .ability-name { color: var(--dark); }
+.char.light .ability-name { color: var(--light); }
+
+.currency {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 8px;
+    background: var(--bg-inset);
+    border: 1px solid var(--border);
+    font-size: 12px;
+    margin-top: 4px;
+}
+.currency .coin { color: var(--light); }
+.currency .pot  { color: var(--dark); }
+
+/* Bot hint - quoted path through the bot UI */
+.bot-hint {
+    margin: 10px 0;
+    padding: 8px 10px;
+    background: var(--bg-inset);
+    border: 1px dashed var(--cyan);
+    font-size: 11px;
+    color: var(--fg-dim);
+}
+.bot-hint-dark {
+    margin: 10px 0;
+    padding: 8px 10px;
+    background: var(--bg-inset);
+    border: 1px dashed var(--dark);
+    font-size: 11px;
+    color: var(--fg-dim);
+}
+.bot-hint b { color: var(--cyan); }
+.bot-hint-dark b { color: var(--dark); }
+.bot-hint .arrow { color: var(--pink); }
+
+/* mobile */
+@media (max-width: 800px) {
+    html, body { overflow: auto; }
+    .layout {
+        grid-template-columns: 1fr;
+        height: auto;
+    }
+    .sidebar {
+        border-right: none;
+        border-bottom: 3px solid var(--border);
+        height: auto;
+    }
+    .content {
+        overflow: visible;
+        padding: 24px 18px 60px;
+    }
+    .grid-2 { grid-template-columns: 1fr; }
+    h1.art-title { font-size: 24px; }
+}
+.logo-row {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* можно убрать если хочешь влево */
+    gap: 8px;
+}
+
+.logo-icon {
+    width: 64px;
+    height: 64px;
+    image-rendering: pixelated;
+}
+</style>
+</head>
+<body>
+
+<div class="layout">
+
+<!-- ═════════════ SIDEBAR ═════════════ -->
+<aside class="sidebar">
+<div class="logo">
+    <div class="logo-row">
+        <img src="icon.png" class="logo-icon">
+        <div class="logo-title">
+            <span class="logo-disco">DISCO</span><span class="logo-amp">&</span><span class="logo-wiki">WIKI</span>
+			<div class="logo-sub">СПРАВОЧНИК</div>
+        </div>
+    </div>
+</div>
+
+    <div class="sidebar-tag">▶ СОЗДАНИЕ</div>
+    <nav>
+        <button class="nav-item active" data-art="intro">
+            <span class="nav-num">01</span>
+            <span class="nav-title">Создание персонажа</span>
+        </button>
+        <button class="nav-item" data-art="example">
+            <span class="nav-num">02</span>
+            <span class="nav-title">Пример:<br>СВИНОПАХ &amp; МАРЧЕР</span>
+        </button>
+    </nav>
+
+    <div class="sidebar-tag">▶ СКОРО</div>
+    <nav>
+        <div class="nav-item disabled">
+            <span class="nav-num">03</span>
+            <span class="nav-title">Язык древних</span>
+        </div>
+        <div class="nav-item disabled">
+            <span class="nav-num">04</span>
+            <span class="nav-title">Карты</span>
+        </div>
+    </nav>
+
+    <div class="sidebar-footer">
+        @DiscoAndDragonsBot
+    </div>
+</aside>
+
+<!-- ═════════════ CONTENT ═════════════ -->
+<main class="content">
+
+<!-- ═══ ARTICLE 1: Создание персонажа ═══ -->
+<article id="intro" class="article visible">
+
+    <div class="breadcrumb">СПРАВОЧНИК <span>/ Создание / 01</span></div>
+    <h1 class="art-title">Создание персонажа</h1>
+    <p class="art-sub">Пошаговая инструкция для создания Светлой и Темной версий персонажа в боте <b>@DiscoAndDragonsBot</b>.</p>
+
+    <p>Привет! Этот гайд проведет тебя через создание <b>основных персонажей</b> для моей сессии. У каждого игрока будет два связанных персонажа: <span style="color:var(--light)">Светлый</span> - 13-летний школьник 7 классник из нашего мира, и <span style="color:var(--dark)">Темный</span> - его душа в темном мире.</p>
+
+    <div class="callout info">
+        <div class="callout-icon">!</div>
+        <div class="callout-body"><b>Начни со Светлого.</b> Характеристики, навыки от предыстории и черты Светлого <b>сохранятся у Темного</b>. Поэтому порядок важен.</div>
+    </div>
+
+    <!-- ───── SVETLYI ───── -->
+    <h2 class="sec-title light">СВЕТЛАЯ ВЕРСИЯ - 13-ЛЕТНИЙ ЧЕЛОВЕК</h2>
+
+    <div class="steps">
+
+        <div class="step light">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <strong>Предыстория</strong><br>
+                Дай персонажу предысторию и возьми от нее <b>навыки</b> и <b>умение</b>.<br>
+                <span class="sub">⚠ Монеты от предыстории <b>не бери</b>. Вместо них - просто 10 монет.</span>
+            </div>
+        </div>
+
+        <div class="step light">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <strong>1 черта</strong><br>
+                Можешь взять <b>одну ДОП черту</b> для персонажа. Можно придумать свою, а можно взять готовую с сайта <b style="color:var(--light)">dnd.su</b>.
+            </div>
+        </div>
+
+        <div class="step light">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <strong>Бросок на макс. хиты</strong><br>
+                Чтобы определить максимальные хиты своего персонажа, кинь <b>1d10</b> в боте:
+                <div class="cmd-light ">
+                    <span class="cmd-prompt-light">&gt;</span>
+                    <strong class="cmd-text">/roll d10</strong>
+                    <button class="cmd-copy-light" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="step light">
+            <div class="step-num">4</div>
+            <div class="step-body">
+                <strong>Характеристики</strong><br>
+                Определяются броском <b>6 костей d20</b> - по одному результату на Сил / Лов / Тел / Инт / Муд / Хар:
+                <div class="cmd-light ">
+                    <span class="cmd-prompt-light">&gt;</span>
+                    <strong class="cmd-text">/roll 6d20</strong>
+                    <button class="cmd-copy-light" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="callout">
+        <div class="callout-icon">!</div>
+        <div class="callout-body"><b>ВАЖНО:</b> ХАРАКТЕРИСТИКИ, полученные от предыстории НАВЫКИ и ЧЕРТЫ Светлого <b>останутся и у вашей души</b> (Темного персонажа). Выбирай осознанно.</div>
+    </div>
+
+    <!-- ───── WORLD ───── -->
+    <h2 class="sec-title info">✦ СВЕТЛЫЙ МИР - ЧТО ИЗВЕСТНО</h2>
+
+    <p>Вы живете в стране <b style="color:var(--cyan)">«Старая Зеландия»</b>, в маленьком городке <b style="color:var(--cyan)">«Старый Орлеан»</b>, он ближе даже к ПГТ.</p>
+
+    <h3 class="sub-title">Школа - класс «А»</h3>
+    <p class="dim">В общеобразовательной школе Старого Орлеана два класса: <b>А</b> (твой) и <b>Б</b>. Вам преподают:</p>
+
+    <div class="grid-2">
+        <div class="box">
+            <div class="box-title"> ОСНОВНЫЕ</div>
+            <ul>
+                <li>Математика</li>
+                <li>Литература</li>
+                <li>Людвигский язык</li>
+                <li>ОБЖ</li>
+                <li>Информатика</li>
+            </ul>
+        </div>
+        <div class="box">
+            <div class="box-title"> ПРОЧИЕ</div>
+            <ul>
+                <li>Биология / Физика / Химия <span style="color:var(--fg-dim)">- один учитель</span></li>
+                <li>Разговоры о важном <span style="color:var(--fg-dim)">- классрук + завуч + медик</span></li>
+                <li>Физкультура</li>
+            </ul>
+        </div>
+    </div>
+
+    <h3 class="sub-title">◆ Ключевые локации города</h3>
+    <div class="loc-list">
+        <div class="loc-name"><b>Мост Титла</b><span class="tag"></span></div>
+        <div class="loc-name"><b>Школа Старого Орлеана</b><span class="tag"></span></div>
+        <div class="loc-name"><b>Гаражи</b><span class="tag"></span></div>
+        <div class="loc-name"><b>Церковь Айна и Кладбище</b></div>
+        <div class="loc-name"><b>Аква-музей «У Пси»</b></div>
+        <div class="loc-name"><b>Музыкальный Магазин «Под Хвостом»</b></div>
+        <div class="loc-name"><b>Бар «Таверна Боба»</b></div>
+        <div class="loc-name"><b>Супермаркет «КЕКЕЯ»</b></div>
+        <div class="loc-name"><b>Жилые пятиэтажки</b></div>
+    </div>
+
+    <!-- ───── LORE ───── -->
+    <h2 class="sec-title info">✎ ЛОР ПЕРСОНАЖА - ПРОДУМАЙ</h2>
+
+    <div class="checklist">
+        <div class="check"><span class="mark">[ ]</span><div><b>Любимый предмет</b> твоего персонажа</div></div>
+        <div class="check"><span class="mark">[ ]</span><div><b>Его родители</b> - кто они, чем живут</div></div>
+        <div class="check"><span class="mark">[ ]</span><div><b>Как учится</b> в школе (успеваемость, интерес)</div></div>
+        <div class="check"><span class="mark">[ ]</span><div><b>Отношения с преподавателями</b> - любимчик, конфликты, равнодушие</div></div>
+        <div class="check"><span class="mark">[ ]</span><div><b>Отношения с одноклассниками</b> - не с каждым, а в целом, как его воспринимает класс</div></div>
+    </div>
+
+    <!-- ───── TEMNAYA ───── -->
+    <h2 class="sec-title dark">ТЕМНАЯ ВЕРСИЯ - ТВОЯ ДУША</h2>
+
+    <p>Чтобы создать темную версию, <b>создай нового персонажа в боте</b> и привяжи его к светлому (кнопка <b style="color:var(--dark)">«Привязать темного персонажа»</b> на светлом).</p>
+
+    <div class="bot-hint-dark">
+        <b>В боте:</b> Главное меню <span class="arrow">►</span> Создать <span class="arrow">►</span> (новое имя) <span class="arrow">►</span> Основное <span class="arrow">►</span> Тип: <b>Темный</b>
+    </div>
+    <div class="bot-hint-dark">
+        <b>Связывание:</b> Зайди к Свет­лому <span class="arrow">►</span> кнопка <b>«Привязать темного персонажа»</b> <span class="arrow">►</span> выбери персонажа. После привязки появятся кнопки <b>перехода</b> и <b>обмена валюты</b> (10 монет ↔ 1 потенциал).
+    </div>
+
+    <h3 class="sub-title">◆ Шаг 1. Имя и перенос со Светлого</h3>
+    <p>Придумай <b>новое имя</b> для Духа. Скопируй со Светлого:</p>
+    <div class="checklist">
+        <div class="check-dark"><span class="mark-dark">→</span><div>Основные характеристики (Сил, Лов, Тел, Инт, Муд, Хар)</div></div>
+        <div class="check-dark"><span class="mark-dark">→</span><div>Навыки, полученные от предыстории</div></div>
+        <div class="check-dark"><span class="mark-dark">→</span><div>Обе черты</div></div>
+    </div>
+
+    <h3 class="sub-title">◆ Шаг 2. Раса - создаешь сам</h3>
+    <div class="steps">
+        <div class="step dark">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <strong>Внешность</strong><br>
+                Опиши примерный внешний вид своего персонажа.
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <strong>1 активная особая способность</strong><br>
+                По силе должна соответствовать <b>заклинанию 1-го уровня</b>.
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <strong>2 пассивных особых способности</strong><br>
+                По силе соответствуют <b>Черте или заклинанию 1-го уровня</b>.
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">4</div>
+            <div class="step-body">
+                <strong>Прирост характеристик</strong><br>
+                Увеличь <b>2 характеристики на +1</b> <i>ИЛИ</i> <b>1 характеристику на +2</b>.<br>
+                <span class="sub">↯ Можно отказаться от 1 пассивной способности и добавить еще +1 к любой характеристике.</span>
+            </div>
+        </div>
+    </div>
+
+    <h3 class="sub-title">◆ Шаг 3. Концепция класса</h3>
+    <div class="steps">
+        <div class="step dark">
+            <div class="step-num">1</div>
+            <div class="step-body">
+                <strong>Кость хитов</strong><br>
+                Выбери d4, d6, d8, d10 или d12 - от нее зависят хиты на 1-м уровне.
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">2</div>
+            <div class="step-body">
+                <strong>Макс. хиты на 1 уровне</strong><br>
+                = <b>максимум кости хитов</b> (для d4 → 4) + <b>модификатор Телосложения</b>.<br>
+                <span class="sub">Минимум - 4 хита.</span>
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">3</div>
+            <div class="step-body">
+                <strong>Владения</strong><br>
+                <b>Доспехи</b> · <b>Оружие</b> · <b>Прочее</b> (инструменты, игральные принадлежности…)
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">4</div>
+            <div class="step-body">
+                <strong>2 навыка компетентности</strong><br>
+                Выбери 2 навыка из существующих - получаешь в них компетентность.
+            </div>
+        </div>
+        <div class="step dark">
+            <div class="step-num">5</div>
+            <div class="step-body">
+                <strong>Снаряжение</strong><br>
+                Опиши следующие предметы:
+                <div class="checklist" style="margin-top:8px;">
+                    <div class="check-light"><span class="mark-light">◆</span><div><b>1 уникальное оружие</b></div></div>
+                    <div class="check-light"><span class="mark-light">◆</span><div><b>1 магическая бижутерия / фокусировка</b></div></div>
+                    <div class="check-light"><span class="mark-light">◆</span><div><b>3 любых интересных не сильных немагических предмета</b> (веревка, зажигалка и т. д.)</div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="callout warn">
+        <div class="callout-icon">$</div>
+        <div class="callout-body">
+            <b>Обмен предметов на монеты:</b><br>
+            • За отказ от <b>каждого</b> предмета - +2 монеты твоему <b>Светлому</b><br>
+            • Отказался ото всех? Брось <b>10d2</b> монет для Светлого:
+            <div class="cmd" style="margin-top:10px;">
+                <span class="cmd-prompt">&gt;</span>
+                <span class="cmd-text">/dice 10d2</span>
+                <button class="cmd-copy" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <p class="dim">Классовые умения пока не прописывай - достаточно задумки.</p>
+
+    <!-- footer nav to next article -->
+    <div style="margin-top:50px; padding-top:24px; border-top:2px dashed var(--border); text-align:right;">
+        <button class="nav-item active" style="display:inline-flex; width:auto; box-shadow:4px 4px 0 var(--border);" data-art="example">
+            <span class="nav-num">02</span>
+            <span class="nav-title">Дальше: Пример - СВИНОПАХ &amp; МАРЧЕР →</span>
+        </button>
+    </div>
+
+</article>
+
+<!-- ═══ ARTICLE 2: Пример СВИНОПАХ & МАРЧЕР ═══ -->
+<article id="example" class="article">
+
+    <div class="breadcrumb">СПРАВОЧНИК <span>/ Создание / 02</span></div>
+    <h1 class="art-title">Пример: СВИНОПАХ &amp; МАРЧЕР</h1>
+
+    <div class="char-pair">
+
+        <!-- ══ SVETLYI ══ -->
+        <div class="char light">
+            <div class="char-head">
+                <div class="char-badge">СВЕТЛЫЙ</div>
+                <div class="char-name">СВИНОПАХ КАКАШКИН</div>
+                <div class="char-subname">ЧЕЛОВЕК · 13 ЛЕТ · УРОВЕНЬ 1</div>
+            </div>
+            <div class="char-body">
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> ОСНОВНОЕ</div>
+                    <div class="kv"><span class="k">Предыстория</span><span class="v">Архивариус</span></div>
+                    <div class="kv"><span class="k">Макс. хиты</span><span class="v">7 <span style="color:var(--fg-mute)">(1d10→7)</span></span></div>
+                    <div class="kv"><span class="k">КД</span><span class="v">11</span></div>
+                    <div class="kv"><span class="k">Кости хитов</span><span class="v">1d8</span></div>
+                    <div class="currency">
+                        <span>Валюта</span>
+                        <span class="coin">10 монет</span>
+                    </div>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> ХАРАКТЕРИСТИКИ</div>
+                    <div class="stats-grid">
+                        <div class="stat"><div class="stat-lbl-light">СИЛ</div><div class="stat-val">8</div><div class="stat-mod">−1</div></div>
+                        <div class="stat"><div class="stat-lbl-light">ЛОВ</div><div class="stat-val">12</div><div class="stat-mod">+1</div></div>
+                        <div class="stat"><div class="stat-lbl-light">ТЕЛ</div><div class="stat-val">11</div><div class="stat-mod">0</div></div>
+                        <div class="stat"><div class="stat-lbl-light">ИНТ</div><div class="stat-val">16</div><div class="stat-mod">+3</div></div>
+                        <div class="stat"><div class="stat-lbl-light">МУД</div><div class="stat-val">15</div><div class="stat-mod">+2</div></div>
+                        <div class="stat"><div class="stat-lbl-light">ХАР</div><div class="stat-val">13</div><div class="stat-mod">+1</div></div>
+                    </div>
+                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ Мудрость 14 + 1 от черты «Наблюдательный» = 15</p>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> НАВЫКИ (ПРЕДЫСТОРИЯ)</div>
+                    <div class="pill-row">
+                        <span class="pill">История</span>
+                        <span class="pill">Анализ</span>
+                    </div>
+                    <div style="margin-top:8px;">
+                        <div class="pill gold">◆ Набор каллиграфа</div>
+                    </div>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> ЧЕРТА</div>
+                    <div class="ability-light">
+                        <div class="ability-name">НАБЛЮДАТЕЛЬНЫЙ</div>
+                        +1 к Мудрости · Пассивное Восприятие и Анализ +5 · Может читать по губам, если видит лицо собеседника.
+                    </div>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> ЛОР</div>
+                    <div class="kv"><span class="k">Любимый предмет</span><span class="v">Информатика</span></div>
+                    <div class="kv"><span class="k">Успеваемость</span><span class="v">Хорошист-ботаник</span></div>
+                    <div class="kv"><span class="k">С учителями</span><span class="v">Любимчик Ксимаса</span></div>
+                    <div class="kv"><span class="k">В классе</span><span class="v">Тихоня</span></div>
+                    <div style="margin-top:8px; font-size:11px; color:var(--fg-dim); line-height:1.55;">
+                        <b style="color:var(--fg)">Родители:</b> мама - библиотекарь в той же школе. Папа - удаленный программист. Семья тихая, книжная.
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- ══ TEMNYI ══ -->
+        <div class="char dark">
+            <div class="char-head">
+                <div class="char-badge">ТЕМНЫЙ</div>
+                <div class="char-name">МАРЧЕР</div>
+                <div class="char-subname">МАРКА · УРОВЕНЬ 1</div>
+            </div>
+            <div class="char-body">
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> ОСНОВНОЕ</div>
+                    <div class="kv"><span class="k">Класс</span><span class="v">ТЕНЕРОКЕР</span></div>
+                    <div class="kv"><span class="k">Раса</span><span class="v">МАРКА</span></div>
+                    <div class="kv"><span class="k">Макс. хиты</span><span class="v">6 + 0 = <b style="color:var(--fg)">6</b></span></div>
+                    <div class="kv"><span class="k">КД</span><span class="v">11</span></div>
+                    <div class="kv"><span class="k">Кость хитов</span><span class="v">1d6</span></div>
+                    <div class="currency">
+                        <span>Валюта</span>
+                        <span class="pot">0 потенциалов</span>
+                    </div>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title"> ХАРАКТЕРИСТИКИ</div>
+                    <div class="stats-grid">
+                        <div class="stat"><div class="stat-lbl-dark">СИЛ</div><div class="stat-val">8</div><div class="stat-mod">−1</div></div>
+                        <div class="stat"><div class="stat-lbl-dark">ЛОВ</div><div class="stat-val">12</div><div class="stat-mod">+1</div></div>
+                        <div class="stat"><div class="stat-lbl-dark">ТЕЛ</div><div class="stat-val">11</div><div class="stat-mod">0</div></div>
+                        <div class="stat bump"><div class="stat-lbl-dark">ИНТ</div><div class="stat-val">17</div><div class="stat-mod">+3</div></div>
+                        <div class="stat"><div class="stat-lbl-dark">МУД</div><div class="stat-val">15</div><div class="stat-mod">+2</div></div>
+                        <div class="stat bump"><div class="stat-lbl-dark">ХАР</div><div class="stat-val">14</div><div class="stat-mod">+2</div></div>
+                    </div>
+                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ Расовый бонус: +1 Инт, +1 Хар</p>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title">ВНЕШНОСТЬ</div>
+                    <p style="font-size:12px; color:var(--fg-dim); line-height:1.55;">Тонкий, почти прозрачная кожа, под которой едва светятся вены. Глаза - темный провал без зрачков. Волосы угольно-черные с серебристыми кончиками. Двигается бесшумно; тень иногда запаздывает за движением.</p>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title">РАСОВЫЕ СПОСОБНОСТИ</div>
+                    <div class="ability-dark">
+                        <div class="ability-name">ТЕНЬ-ЗАХВАТ <span style="color:var(--fg-mute); font-size:10px;">(1/кор. отдых)</span></div>
+                        Захватываешь тень существа в 9 м. Спасбросок Мудрости СЛ 13. При провале - скорость цели 0 до конца ее следующего хода.
+                    </div>
+                    <div class="ability-dark">
+                        <div class="ability-name">ТЕНЕВОЕ ВОСПРИЯТИЕ <span style="color:var(--fg-mute); font-size:10px;">(пассив)</span></div>
+                        Темное зрение 12 м. В тусклом свете - преимущество на Восприятие.
+                    </div>
+                    <div class="ability-dark">
+                        <div class="ability-name">ЭХО ПАМЯТИ <span style="color:var(--fg-mute); font-size:10px;">(пассив)</span></div>
+                        Прикоснувшись к предмету, Инт проверка СЛ 15 - чувствуешь последнюю сильную эмоцию владельца.
+                    </div>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title">НАВЫКИ (ВСЕ)</div>
+                    <div class="pill-row">
+                        <span class="pill">История</span>
+                        <span class="pill">Анализ</span>
+                        <span class="pill" style="color:var(--dark); border-color:var(--dark)">Скрытность</span>
+                        <span class="pill" style="color:var(--dark); border-color:var(--dark)">Обман</span>
+                    </div>
+                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ фиолетовые - компетентность от класса</p>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title">ВЛАДЕНИЯ</div>
+                    <div class="kv"><span class="k">Доспехи</span><span class="v">Легкие</span></div>
+                    <div class="kv"><span class="k">Оружие</span><span class="v">Простое, метательное</span></div>
+                    <div class="kv"><span class="k">Прочее</span><span class="v">Воровские инструменты</span></div>
+                </div>
+
+                <div class="char-sec">
+                    <div class="char-sec-title">СНАРЯЖЕНИЕ</div>
+                    <div class="ability-dark">
+                        <div class="ability-name">Гитара</div>
+                        Бляяя рок. Урон 1d4 + мод. Ловкости.
+                    </div>
+                    <div class="ability-dark">
+                        <div class="ability-name">Шляпа <span style="color:var(--fg-mute); font-size:10px;">(фокусировка)</span></div>
+                        Ква-ква
+                    </div>
+                    <div class="pill-row">
+                        <span class="pill">Моток веревки (15 м)</span>
+                        <span class="pill">Старый компас</span>
+                        <span class="pill">Зажигалка</span>
+                    </div>
+                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ Все предметы взяты → +0 монет Светлому</p>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Fill-in hint -->
+    <h2 class="sec-title info">▶ КАК ЗАПОЛНИТЬ В БОТЕ</h2>
+
+    <div class="grid-2">
+        <div class="box">
+            <div class="box-title" style="color:var(--light)">СВЕТЛЫЙ</div>
+            <ul>
+                <li>Имя: <b>СВИНОПАХ КАКАШКИН</b></li>
+                <li>Макс. хиты: 7 · КД: 11</li>
+                <li>Характеристики: 8 · 12 · 11 · 16 · 15 · 13</li>
+                <li>Навыки → поставить: История, Анализ</li>
+                <li>Монеты: 10</li>
+                <li>Способности → добавить: «Наблюдательный»</li>
+                <li>Возраст: 13 <span style="color:var(--fg-mute)">(стоит по умолчанию)</span></li>
+            </ul>
+        </div>
+        <div class="box">
+            <div class="box-title" style="color:var(--dark)">ТЕМНЫЙ</div>
+            <ul>
+                <li>Имя: <b>МАРЧЕР</b></li>
+                <li>Основное → Тип: <b>Темный</b></li>
+                <li>Раса: МАРКА · Класс: ТЕНЕРОКЕР</li>
+                <li>Макс. хиты: 6 · Кости хитов: 1d6</li>
+                <li>Характеристики: 8 · 12 · 11 · 17 · 15 · 14</li>
+                <li>Навыки → История, Анализ, Скрытность, Обман</li>
+                <li>Оружие → Тень-клинок (+1 к поп., 1d4, колющий)</li>
+                <li>Способности → 3 расовые + «Наблюдательный»</li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div style="margin-top:40px; padding-top:24px; border-top:2px dashed var(--border); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
+        <button class="nav-item active" style="display:inline-flex; width:auto; box-shadow:4px 4px 0 var(--border);" data-art="intro">
+            <span class="nav-num">01</span>
+            <span class="nav-title">← Назад: Создание персонажа</span>
+        </button>
+    </div>
+
+</article>
+
+</main>
+</div>
+
+<script>
+// ─── Navigation ────────────────────────────────────
+document.querySelectorAll('[data-art]').forEach(function(btn){
+    btn.addEventListener('click', function(){
+        var target = btn.dataset.art;
+        document.querySelectorAll('.nav-item[data-art]').forEach(function(b){
+            b.classList.toggle('active', b.dataset.art === target);
+        });
+        document.querySelectorAll('.article').forEach(function(a){
+            a.classList.toggle('visible', a.id === target);
+        });
+        var main = document.querySelector('.content');
+        if (main) main.scrollTop = 0;
+        window.scrollTo(0, 0);
+    });
+});
+
+// ─── Copy commands ─────────────────────────────────
+function copyCmd(btn){
+    var txt = btn.parentElement.querySelector('.cmd-text').textContent.trim();
+    var ok = function(){
+        var prev = btn.textContent;
+        btn.textContent = '✓ ОК';
+        btn.classList.add('copied');
+        setTimeout(function(){
+            btn.textContent = prev;
+            btn.classList.remove('copied');
+        }, 1200);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(txt).then(ok).catch(function(){
+            // fallback
+            var ta = document.createElement('textarea');
+            ta.value = txt; document.body.appendChild(ta); ta.select();
+            try { document.execCommand('copy'); ok(); } catch(e){}
+            document.body.removeChild(ta);
+        });
+    } else {
+        var ta = document.createElement('textarea');
+        ta.value = txt; document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); ok(); } catch(e){}
+        document.body.removeChild(ta);
+    }
+}
+window.copyCmd = copyCmd;
+</script>
+<canvas id="scanlines"></canvas>
+<script>
+  const slCanvas  = document.getElementById('scanlines');
+  const slCtx     = slCanvas.getContext('2d');
+  let lineOffsets = [];
+  let flickerPhase = 0;
+
+  function buildScanlines() {
+    lineOffsets = [];
+    let y = 0;
+    while (y < slCanvas.height) {
+      lineOffsets.push({ y, alpha: 0.10 + Math.random()*0.09, h: Math.random()<0.12?2:1 });
+      y += Math.random()<0.3 ? 4 : 3;
+    }
+  }
+
+  function resizeScanlines() {
+    slCanvas.width  = window.innerWidth;
+    slCanvas.height = window.innerHeight;
+    buildScanlines(); drawScanlines();
+  }
+
+  function drawScanlines() {
+    slCtx.clearRect(0,0,slCanvas.width,slCanvas.height);
+    const cx=slCanvas.width*.48, cy=slCanvas.height*.52;
+    const r = Math.max(slCanvas.width,slCanvas.height)*.72;
+    const vg = slCtx.createRadialGradient(cx,cy,r*.3,cx,cy,r);
+    vg.addColorStop(0,'rgba(0,0,0,0)'); vg.addColorStop(1,'rgba(0,0,0,0)');
+    slCtx.fillStyle=vg; slCtx.fillRect(0,0,slCanvas.width,slCanvas.height);
+    flickerPhase += 0.018;
+    const shift = Math.sin(flickerPhase)*0.012 + (Math.random()<0.003 ? Math.random()*0.06 : 0);
+    for (const ln of lineOffsets) {
+      const extra = Math.random()<0.004 ? 0.07 : 0;
+      slCtx.fillStyle = `rgba(0,0,0,${Math.max(0, ln.alpha+shift+extra)})`;
+      slCtx.fillRect(0, ln.y, slCanvas.width, ln.h);
+    }
+  }
+
+  window.addEventListener('resize', () => { resizeCanvas(); resizeScanlines(); });
+resizeScanlines();
+drawScanlines();
+</script>
+</body>
+</html>
