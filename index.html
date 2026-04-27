@@ -695,7 +695,7 @@ p.dim { color: #ffffff; font-size: 13px; }
     </div>
 </div>
 
-    <div class="sidebar-tag">▶ РУКОВОДСТВО</div>
+    <div class="sidebar-tag">▶ СПРАВОЧНИК</div>
     <nav id="nav-articles"></nav>
 
     <div class="sidebar-tag">▶ СКОРО</div>
@@ -847,6 +847,15 @@ async function loadArticles(){
             var resp = await fetch(encodeURI(art.filename), { cache: 'no-cache' });
             if (!resp.ok) throw new Error('HTTP ' + resp.status);
             articleEl.innerHTML = await resp.text();
+            // innerHTML не выполняет <script> — переносим каждый в живой элемент
+            articleEl.querySelectorAll('script').forEach(function(oldScript){
+                var newScript = document.createElement('script');
+                Array.from(oldScript.attributes).forEach(function(attr){
+                    newScript.setAttribute(attr.name, attr.value);
+                });
+                newScript.textContent = oldScript.textContent;
+                oldScript.parentNode.replaceChild(newScript, oldScript);
+            });
         } catch (e) {
             articleEl.innerHTML =
                 '<div class="load-error">Не удалось загрузить файл «' + art.filename + '»: ' + e.message + '</div>';
