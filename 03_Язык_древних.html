@@ -1,0 +1,97 @@
+<div class="breadcrumb">СПРАВОЧНИК <span>/ Лор / 03</span></div>
+<h1 class="art-title">Язык Древних</h1>
+<p class="art-sub">Письменность, отказывающаяся быть прочитанной.</p>
+
+<p>В архивах Ярусного королевства неоднократно делались попытки зафиксировать всё, что известно о <b style="color:var(--cyan)">Языке Древних</b>. Каждая такая попытка <b>искажается</b> — символы текста перетекают друг в друга, и смысл ускользает прежде, чем перо успевает его поймать.</p>
+
+<div class="callout">
+    <div class="callout-icon">!</div>
+    <div class="callout-body"><b>ВНИМАНИЕ:</b> ниже представлен фрагмент архивной записи в его текущем состоянии. Содержимое <b>не зашифровано — оно искажено</b>. Не вглядывайся в него слишком долго.</div>
+</div>
+
+<h2 class="sec-title">▒ ФРАГМЕНТ АРХИВА</h2>
+
+<div class="glitch-block">[требуется JavaScript для отображения искажённого фрагмента]</div>
+
+<p class="dim">Запись обновляется примерно каждые 2.5 секунды. Каждая буква исходного текста подменяется случайным глифом из набора искажения; пробелы и переносы строк сохраняются — потому и видно, что под помехами что-то <i>есть</i>.</p>
+
+<h2 class="sec-title info">✎ ЧТО ИЗ ЭТОГО УДАЛОСЬ ВЫЧИТАТЬ</h2>
+
+<p>Сравнивая независимые попытки фиксации, архивариусы выделили <b>две устойчивые теории</b> происхождения языка. Обе пока не опровергнуты и не подтверждены.</p>
+
+<div class="grid-2">
+    <div class="box">
+        <div class="box-title">ТЕОРИЯ I — МАСТИ</div>
+        <p>Язык был широко распространён в эпоху правления <b>Карточных мастей</b> и служил их официальной письменностью.</p>
+    </div>
+    <div class="box">
+        <div class="box-title">ТЕОРИЯ II — ДО МАСТЕЙ</div>
+        <p>Письменность возникла <b>задолго</b> до установления власти Мастей и принадлежит цивилизации, о которой почти ничего не известно.</p>
+    </div>
+</div>
+
+<p class="dim">Дальнейшие сведения утрачены — или ещё не извлечены из помех.</p>
+
+<style>
+.glitch-block {
+    position: relative;
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px dashed var(--red);
+    border-radius: 3px;
+    padding: 26px 18px 18px 18px;
+    margin: 18px 0;
+    font-family: 'Courier New', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.9;
+    color: var(--red);
+    letter-spacing: 1.5px;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow: hidden;
+    user-select: none;
+    text-shadow: 0 0 6px rgba(199, 15, 15, 0.45);
+    min-height: 120px;
+}
+.glitch-block::before {
+    content: "// ДАННЫЕ ИСКАЖЕНЫ";
+    position: absolute;
+    top: 6px;
+    left: 12px;
+    font-size: 10px;
+    color: var(--fg-mute);
+    letter-spacing: 2.5px;
+    font-family: 'Courier New', monospace;
+}
+.glitch-block::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(0deg, transparent 0, transparent 3px, rgba(255, 255, 255, 0.025) 3px, rgba(255, 255, 255, 0.025) 4px);
+    pointer-events: none;
+}
+</style>
+
+<img src="x" alt="" style="display:none" onerror="(function(){
+    if (window.__glitchAncientInt) { clearInterval(window.__glitchAncientInt); window.__glitchAncientInt = null; }
+    var GLITCH_ABC = '!@#$%&amp;*0123456789░▒▓╬═╪▄▀■□±§~^';
+    var SOURCE = 'Язык Древних - архаичная система письменности, некогда использовавшаяся обитателями территорий, на которых ныне располагается Ярусное королевство. На данный момент выделяют две основные теории его происхождения.\n\nСогласно первой, язык был широко распространен в эпоху правления Карточных мастей. Вторая же теория гласит, что эта письменность возникла в глубокой древности, задолго до установления власти Мастей, и принадлежит цивилизации, о которой почти ничего не известно.';
+    function paint() {
+        var blocks = document.querySelectorAll('.glitch-block');
+        if (!blocks.length) {
+            if (window.__glitchAncientInt) { clearInterval(window.__glitchAncientInt); window.__glitchAncientInt = null; }
+            return;
+        }
+        var out = '';
+        for (var i = 0; i &lt; SOURCE.length; i++) {
+            var c = SOURCE.charAt(i);
+            if (c === ' ' || c === '\n' || c === '\t') {
+                out += c;
+            } else {
+                out += GLITCH_ABC.charAt(Math.floor(Math.random() * GLITCH_ABC.length));
+            }
+        }
+        for (var j = 0; j &lt; blocks.length; j++) blocks[j].textContent = out;
+    }
+    paint();
+    window.__glitchAncientInt = setInterval(paint, 2500);
+})();">
