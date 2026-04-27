@@ -1,0 +1,59 @@
+<div class="breadcrumb">СПРАВОЧНИК <span>/ Инструменты / 04</span></div>
+<h1 class="art-title">Сайт D&amp;DJ</h1>
+<p class="art-sub">Синхронизированный музыкальный плеер для сессий - как подключиться и что увидит каждый.</p>
+
+<p><b style="color:var(--gold)">D&amp;DJ</b> - это веб-инструмент, который позволит мне (Фейге), как вашему Мастеру, управлять музыкой и атмосферными звуками прямо во время сессии, а игрокам - слышать всё это синхронно в браузере на телефоне или ПК. Изначальной целью было заменить лагающий Discord и подгружать аудиозаписи заранее, чтобы избежать проблем с прямой трансляцией звуков из-за нестабильного интернет-соединения</p>
+
+<div class="callout info">
+    <div class="callout-icon">!</div>
+    <div class="callout-body">Сайт <b>не работает</b> вне сессий. Он кушает мои деньги, поэтому я его выключаю.</div>
+</div>
+
+<h2 class="sec-title">▶ КАК ЭТО УСТРОЕНО</h2>
+
+<p>Чтобы войти в сессию, игроку нужно сделать три простых шага:</p>
+
+<div class="steps">
+
+    <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-body">
+            <strong>Открой страницу входа</strong><br>
+            Перейди на <b style="color:var(--gold)">dndj-cozzybug.amvera.io/join</b> - там два поля: имя и код сессии.
+			<div class="cmd" style="margin-top:10px;">
+            <span class="cmd-prompt">&gt;</span>
+            <span class="cmd-text">dndj-cozzybug.amvera.io/join</span>
+            <button class="cmd-copy" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-body">
+            <strong>Введи имя и код</strong><br>
+            Имя - любое, до 32 символов. Код сессии выдаёт Мастер.
+            <span class="sub">⚠ Если код неверный - страница вернётся с сообщением «неверный код»</span>
+        </div>
+    </div>
+
+    <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-body">
+            <strong>Нажми «войти»</strong><br>
+            Браузер перенаправит тебя на <b>/player</b>. После успешного входа cookie сохраняется - при следующем открытии сайта ты попадёшь сразу на плеер.
+        </div>
+    </div>
+
+</div>
+
+<h2 class="sec-title info">✦ СИНХРОНИЗАЦИЯ И ЗАДЕРЖКА</h2>
+
+<p>У игроков с медленным интернетом музыка может начинаться на несколько секунд позже Мастера. Для этого есть встроенная панель компенсации задержки - она открывается кнопкой в нижнем левом углу экрана игрока.</p>
+
+<div class="bot-hint">
+    <b>На экране игрока:</b> кнопка задержки <span class="arrow">►</span> установи значение в секундах <span class="arrow">►</span> применить
+</div>
+
+<p class="dim">Система автоматически делает замер пинга до сервера и может предложить подходящее значение сама.</p>
+
