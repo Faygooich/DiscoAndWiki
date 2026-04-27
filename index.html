@@ -662,6 +662,21 @@ p.dim { color: #ffffff; font-size: 13px; }
     height: 64px;
     image-rendering: pixelated;
 }
+
+/* Loading state */
+.loading {
+    padding: 40px;
+    color: var(--fg-mute);
+    font-size: 13px;
+    letter-spacing: 1px;
+}
+.load-error {
+    padding: 16px;
+    border: 2px solid var(--red);
+    color: var(--fg);
+    font-size: 13px;
+    margin: 20px 0;
+}
 </style>
 </head>
 <body>
@@ -675,34 +690,16 @@ p.dim { color: #ffffff; font-size: 13px; }
         <img src="icon.png" class="logo-icon">
         <div class="logo-title">
             <span class="logo-disco">DISCO</span><span class="logo-amp">&</span><span class="logo-wiki">WIKI</span>
-			<div class="logo-sub">СПРАВОЧНИК</div>
+            <div class="logo-sub">СПРАВОЧНИК</div>
         </div>
     </div>
 </div>
 
     <div class="sidebar-tag">▶ СОЗДАНИЕ</div>
-    <nav>
-        <button class="nav-item active" data-art="intro">
-            <span class="nav-num">01</span>
-            <span class="nav-title">Создание персонажа</span>
-        </button>
-        <button class="nav-item" data-art="example">
-            <span class="nav-num">02</span>
-            <span class="nav-title">Пример:<br>СВИНОПАХ &amp; МАРЧЕР</span>
-        </button>
-    </nav>
+    <nav id="nav-articles"></nav>
 
     <div class="sidebar-tag">▶ СКОРО</div>
-    <nav>
-        <div class="nav-item disabled">
-            <span class="nav-num">03</span>
-            <span class="nav-title">Язык древних</span>
-        </div>
-        <div class="nav-item disabled">
-            <span class="nav-num">04</span>
-            <span class="nav-title">Карты</span>
-        </div>
-    </nav>
+    <nav id="nav-soon"></nav>
 
     <div class="sidebar-footer">
         @DiscoAndDragonsBot
@@ -710,488 +707,167 @@ p.dim { color: #ffffff; font-size: 13px; }
 </aside>
 
 <!-- ═════════════ CONTENT ═════════════ -->
-<main class="content">
-
-<!-- ═══ ARTICLE 1: Создание персонажа ═══ -->
-<article id="intro" class="article visible">
-
-    <div class="breadcrumb">СПРАВОЧНИК <span>/ Создание / 01</span></div>
-    <h1 class="art-title">Создание персонажа</h1>
-    <p class="art-sub">Пошаговая инструкция для создания Светлой и Темной версий персонажа в боте <b>@DiscoAndDragonsBot</b>.</p>
-
-    <p>Привет! Этот гайд проведет тебя через создание <b>основных персонажей</b> для моей сессии. У каждого игрока будет два связанных персонажа: <span style="color:var(--light)">Светлый</span> - 13-летний школьник 7 классник из нашего мира, и <span style="color:var(--dark)">Темный</span> - его душа в темном мире.</p>
-
-    <div class="callout info">
-        <div class="callout-icon">!</div>
-        <div class="callout-body"><b>Начни со Светлого.</b> Характеристики, навыки от предыстории и черты Светлого <b>сохранятся у Темного</b>. Поэтому порядок важен.</div>
-    </div>
-
-    <!-- ───── SVETLYI ───── -->
-    <h2 class="sec-title light">СВЕТЛАЯ ВЕРСИЯ - 13-ЛЕТНИЙ ЧЕЛОВЕК</h2>
-
-    <div class="steps">
-
-        <div class="step light">
-            <div class="step-num">1</div>
-            <div class="step-body">
-                <strong>Предыстория</strong><br>
-                Дай персонажу предысторию и возьми от нее <b>навыки</b> и <b>умение</b>.<br>
-                <span class="sub">⚠ Монеты от предыстории <b>не бери</b>. Вместо них - просто 10 монет.</span>
-            </div>
-        </div>
-
-        <div class="step light">
-            <div class="step-num">2</div>
-            <div class="step-body">
-                <strong>1 черта</strong><br>
-                Можешь взять <b>одну ДОП черту</b> для персонажа. Можно придумать свою, а можно взять готовую с сайта <b style="color:var(--light)">dnd.su</b>.
-            </div>
-        </div>
-
-        <div class="step light">
-            <div class="step-num">3</div>
-            <div class="step-body">
-                <strong>Бросок на макс. хиты</strong><br>
-                Чтобы определить максимальные хиты своего персонажа, кинь <b>1d10</b> в боте:
-                <div class="cmd-light ">
-                    <span class="cmd-prompt-light">&gt;</span>
-                    <strong class="cmd-text">/roll d10</strong>
-                    <button class="cmd-copy-light" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="step light">
-            <div class="step-num">4</div>
-            <div class="step-body">
-                <strong>Характеристики</strong><br>
-                Определяются броском <b>6 костей d20</b> - по одному результату на Сил / Лов / Тел / Инт / Муд / Хар:
-                <div class="cmd-light ">
-                    <span class="cmd-prompt-light">&gt;</span>
-                    <strong class="cmd-text">/roll 6d20</strong>
-                    <button class="cmd-copy-light" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <div class="callout">
-        <div class="callout-icon">!</div>
-        <div class="callout-body"><b>ВАЖНО:</b> ХАРАКТЕРИСТИКИ, полученные от предыстории НАВЫКИ и ЧЕРТЫ Светлого <b>останутся и у вашей души</b> (Темного персонажа). Выбирай осознанно.</div>
-    </div>
-
-    <!-- ───── WORLD ───── -->
-    <h2 class="sec-title info">✦ СВЕТЛЫЙ МИР - ЧТО ИЗВЕСТНО</h2>
-
-    <p>Вы живете в стране <b style="color:var(--cyan)">«Старая Зеландия»</b>, в маленьком городке <b style="color:var(--cyan)">«Старый Орлеан»</b>, он ближе даже к ПГТ.</p>
-
-    <h3 class="sub-title">Школа - класс «А»</h3>
-    <p class="dim">В общеобразовательной школе Старого Орлеана два класса: <b>А</b> (твой) и <b>Б</b>. Вам преподают:</p>
-
-    <div class="grid-2">
-        <div class="box">
-            <div class="box-title"> ОСНОВНЫЕ</div>
-            <ul>
-                <li>Математика</li>
-                <li>Литература</li>
-                <li>Людвигский язык</li>
-                <li>ОБЖ</li>
-                <li>Информатика</li>
-            </ul>
-        </div>
-        <div class="box">
-            <div class="box-title"> ПРОЧИЕ</div>
-            <ul>
-                <li>Биология / Физика / Химия <span style="color:var(--fg-dim)">- один учитель</span></li>
-                <li>Разговоры о важном <span style="color:var(--fg-dim)">- классрук + завуч + медик</span></li>
-                <li>Физкультура</li>
-            </ul>
-        </div>
-    </div>
-
-    <h3 class="sub-title">◆ Ключевые локации города</h3>
-    <div class="loc-list">
-        <div class="loc-name"><b>Мост Титла</b><span class="tag"></span></div>
-        <div class="loc-name"><b>Школа Старого Орлеана</b><span class="tag"></span></div>
-        <div class="loc-name"><b>Гаражи</b><span class="tag"></span></div>
-        <div class="loc-name"><b>Церковь Айна и Кладбище</b></div>
-        <div class="loc-name"><b>Аква-музей «У Пси»</b></div>
-        <div class="loc-name"><b>Музыкальный Магазин «Под Хвостом»</b></div>
-        <div class="loc-name"><b>Бар «Таверна Боба»</b></div>
-        <div class="loc-name"><b>Супермаркет «КЕКЕЯ»</b></div>
-        <div class="loc-name"><b>Жилые пятиэтажки</b></div>
-    </div>
-
-    <!-- ───── LORE ───── -->
-    <h2 class="sec-title info">✎ ЛОР ПЕРСОНАЖА - ПРОДУМАЙ</h2>
-
-    <div class="checklist">
-        <div class="check"><span class="mark">[ ]</span><div><b>Любимый предмет</b> твоего персонажа</div></div>
-        <div class="check"><span class="mark">[ ]</span><div><b>Его родители</b> - кто они, чем живут</div></div>
-        <div class="check"><span class="mark">[ ]</span><div><b>Как учится</b> в школе (успеваемость, интерес)</div></div>
-        <div class="check"><span class="mark">[ ]</span><div><b>Отношения с преподавателями</b> - любимчик, конфликты, равнодушие</div></div>
-        <div class="check"><span class="mark">[ ]</span><div><b>Отношения с одноклассниками</b> - не с каждым, а в целом, как его воспринимает класс</div></div>
-    </div>
-
-    <!-- ───── TEMNAYA ───── -->
-    <h2 class="sec-title dark">ТЕМНАЯ ВЕРСИЯ - ТВОЯ ДУША</h2>
-
-    <p>Чтобы создать темную версию, <b>создай нового персонажа в боте</b> и привяжи его к светлому (кнопка <b style="color:var(--dark)">«Привязать темного персонажа»</b> на светлом).</p>
-
-    <div class="bot-hint-dark">
-        <b>В боте:</b> Главное меню <span class="arrow">►</span> Создать <span class="arrow">►</span> (новое имя) <span class="arrow">►</span> Основное <span class="arrow">►</span> Тип: <b>Темный</b>
-    </div>
-    <div class="bot-hint-dark">
-        <b>Связывание:</b> Зайди к Свет­лому <span class="arrow">►</span> кнопка <b>«Привязать темного персонажа»</b> <span class="arrow">►</span> выбери персонажа. После привязки появятся кнопки <b>перехода</b> и <b>обмена валюты</b> (10 монет ↔ 1 потенциал).
-    </div>
-
-    <h3 class="sub-title">◆ Шаг 1. Имя и перенос со Светлого</h3>
-    <p>Придумай <b>новое имя</b> для Духа. Скопируй со Светлого:</p>
-    <div class="checklist">
-        <div class="check-dark"><span class="mark-dark">→</span><div>Основные характеристики (Сил, Лов, Тел, Инт, Муд, Хар)</div></div>
-        <div class="check-dark"><span class="mark-dark">→</span><div>Навыки, полученные от предыстории</div></div>
-        <div class="check-dark"><span class="mark-dark">→</span><div>Обе черты</div></div>
-    </div>
-
-    <h3 class="sub-title">◆ Шаг 2. Раса - создаешь сам</h3>
-    <div class="steps">
-        <div class="step dark">
-            <div class="step-num">1</div>
-            <div class="step-body">
-                <strong>Внешность</strong><br>
-                Опиши примерный внешний вид своего персонажа.
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">2</div>
-            <div class="step-body">
-                <strong>1 активная особая способность</strong><br>
-                По силе должна соответствовать <b>заклинанию 1-го уровня</b>.
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">3</div>
-            <div class="step-body">
-                <strong>2 пассивных особых способности</strong><br>
-                По силе соответствуют <b>Черте или заклинанию 1-го уровня</b>.
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">4</div>
-            <div class="step-body">
-                <strong>Прирост характеристик</strong><br>
-                Увеличь <b>2 характеристики на +1</b> <i>ИЛИ</i> <b>1 характеристику на +2</b>.<br>
-                <span class="sub">↯ Можно отказаться от 1 пассивной способности и добавить еще +1 к любой характеристике.</span>
-            </div>
-        </div>
-    </div>
-
-    <h3 class="sub-title">◆ Шаг 3. Концепция класса</h3>
-    <div class="steps">
-        <div class="step dark">
-            <div class="step-num">1</div>
-            <div class="step-body">
-                <strong>Кость хитов</strong><br>
-                Выбери d4, d6, d8, d10 или d12 - от нее зависят хиты на 1-м уровне.
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">2</div>
-            <div class="step-body">
-                <strong>Макс. хиты на 1 уровне</strong><br>
-                = <b>максимум кости хитов</b> (для d4 → 4) + <b>модификатор Телосложения</b>.<br>
-                <span class="sub">Минимум - 4 хита.</span>
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">3</div>
-            <div class="step-body">
-                <strong>Владения</strong><br>
-                <b>Доспехи</b> · <b>Оружие</b> · <b>Прочее</b> (инструменты, игральные принадлежности…)
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">4</div>
-            <div class="step-body">
-                <strong>2 навыка компетентности</strong><br>
-                Выбери 2 навыка из существующих - получаешь в них компетентность.
-            </div>
-        </div>
-        <div class="step dark">
-            <div class="step-num">5</div>
-            <div class="step-body">
-                <strong>Снаряжение</strong><br>
-                Опиши следующие предметы:
-                <div class="checklist" style="margin-top:8px;">
-                    <div class="check-light"><span class="mark-light">◆</span><div><b>1 уникальное оружие</b></div></div>
-                    <div class="check-light"><span class="mark-light">◆</span><div><b>1 магическая бижутерия / фокусировка</b></div></div>
-                    <div class="check-light"><span class="mark-light">◆</span><div><b>3 любых интересных не сильных немагических предмета</b> (веревка, зажигалка и т. д.)</div></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="callout warn">
-        <div class="callout-icon">$</div>
-        <div class="callout-body">
-            <b>Обмен предметов на монеты:</b><br>
-            • За отказ от <b>каждого</b> предмета - +2 монеты твоему <b>Светлому</b><br>
-            • Отказался ото всех? Брось <b>10d2</b> монет для Светлого:
-            <div class="cmd" style="margin-top:10px;">
-                <span class="cmd-prompt">&gt;</span>
-                <span class="cmd-text">/dice 10d2</span>
-                <button class="cmd-copy" onclick="copyCmd(this)">КОПИРОВАТЬ</button>
-            </div>
-        </div>
-    </div>
-
-    <p class="dim">Классовые умения пока не прописывай - достаточно задумки.</p>
-
-    <!-- footer nav to next article -->
-    <div style="margin-top:50px; padding-top:24px; border-top:2px dashed var(--border); text-align:right;">
-        <button class="nav-item active" style="display:inline-flex; width:auto; box-shadow:4px 4px 0 var(--border);" data-art="example">
-            <span class="nav-num">02</span>
-            <span class="nav-title">Дальше: Пример - СВИНОПАХ &amp; МАРЧЕР →</span>
-        </button>
-    </div>
-
-</article>
-
-<!-- ═══ ARTICLE 2: Пример СВИНОПАХ & МАРЧЕР ═══ -->
-<article id="example" class="article">
-
-    <div class="breadcrumb">СПРАВОЧНИК <span>/ Создание / 02</span></div>
-    <h1 class="art-title">Пример: СВИНОПАХ &amp; МАРЧЕР</h1>
-
-    <div class="char-pair">
-
-        <!-- ══ SVETLYI ══ -->
-        <div class="char light">
-            <div class="char-head">
-                <div class="char-badge">СВЕТЛЫЙ</div>
-                <div class="char-name">СВИНОПАХ КАКАШКИН</div>
-                <div class="char-subname">ЧЕЛОВЕК · 13 ЛЕТ · УРОВЕНЬ 1</div>
-            </div>
-            <div class="char-body">
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> ОСНОВНОЕ</div>
-                    <div class="kv"><span class="k">Предыстория</span><span class="v">Архивариус</span></div>
-                    <div class="kv"><span class="k">Макс. хиты</span><span class="v">7 <span style="color:var(--fg-mute)">(1d10→7)</span></span></div>
-                    <div class="kv"><span class="k">КД</span><span class="v">11</span></div>
-                    <div class="kv"><span class="k">Кости хитов</span><span class="v">1d8</span></div>
-                    <div class="currency">
-                        <span>Валюта</span>
-                        <span class="coin">10 монет</span>
-                    </div>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> ХАРАКТЕРИСТИКИ</div>
-                    <div class="stats-grid">
-                        <div class="stat"><div class="stat-lbl-light">СИЛ</div><div class="stat-val">8</div><div class="stat-mod">−1</div></div>
-                        <div class="stat"><div class="stat-lbl-light">ЛОВ</div><div class="stat-val">12</div><div class="stat-mod">+1</div></div>
-                        <div class="stat"><div class="stat-lbl-light">ТЕЛ</div><div class="stat-val">11</div><div class="stat-mod">0</div></div>
-                        <div class="stat"><div class="stat-lbl-light">ИНТ</div><div class="stat-val">16</div><div class="stat-mod">+3</div></div>
-                        <div class="stat"><div class="stat-lbl-light">МУД</div><div class="stat-val">15</div><div class="stat-mod">+2</div></div>
-                        <div class="stat"><div class="stat-lbl-light">ХАР</div><div class="stat-val">13</div><div class="stat-mod">+1</div></div>
-                    </div>
-                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ Мудрость 14 + 1 от черты «Наблюдательный» = 15</p>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> НАВЫКИ (ПРЕДЫСТОРИЯ)</div>
-                    <div class="pill-row">
-                        <span class="pill">История</span>
-                        <span class="pill">Анализ</span>
-                    </div>
-                    <div style="margin-top:8px;">
-                        <div class="pill gold">◆ Набор каллиграфа</div>
-                    </div>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> ЧЕРТА</div>
-                    <div class="ability-light">
-                        <div class="ability-name">НАБЛЮДАТЕЛЬНЫЙ</div>
-                        +1 к Мудрости · Пассивное Восприятие и Анализ +5 · Может читать по губам, если видит лицо собеседника.
-                    </div>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> ЛОР</div>
-                    <div class="kv"><span class="k">Любимый предмет</span><span class="v">Информатика</span></div>
-                    <div class="kv"><span class="k">Успеваемость</span><span class="v">Хорошист-ботаник</span></div>
-                    <div class="kv"><span class="k">С учителями</span><span class="v">Любимчик Ксимаса</span></div>
-                    <div class="kv"><span class="k">В классе</span><span class="v">Тихоня</span></div>
-                    <div style="margin-top:8px; font-size:11px; color:var(--fg-dim); line-height:1.55;">
-                        <b style="color:var(--fg)">Родители:</b> мама - библиотекарь в той же школе. Папа - удаленный программист. Семья тихая, книжная.
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- ══ TEMNYI ══ -->
-        <div class="char dark">
-            <div class="char-head">
-                <div class="char-badge">ТЕМНЫЙ</div>
-                <div class="char-name">МАРЧЕР</div>
-                <div class="char-subname">МАРКА · УРОВЕНЬ 1</div>
-            </div>
-            <div class="char-body">
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> ОСНОВНОЕ</div>
-                    <div class="kv"><span class="k">Класс</span><span class="v">ТЕНЕРОКЕР</span></div>
-                    <div class="kv"><span class="k">Раса</span><span class="v">МАРКА</span></div>
-                    <div class="kv"><span class="k">Макс. хиты</span><span class="v">6 + 0 = <b style="color:var(--fg)">6</b></span></div>
-                    <div class="kv"><span class="k">КД</span><span class="v">11</span></div>
-                    <div class="kv"><span class="k">Кость хитов</span><span class="v">1d6</span></div>
-                    <div class="currency">
-                        <span>Валюта</span>
-                        <span class="pot">0 потенциалов</span>
-                    </div>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title"> ХАРАКТЕРИСТИКИ</div>
-                    <div class="stats-grid">
-                        <div class="stat"><div class="stat-lbl-dark">СИЛ</div><div class="stat-val">8</div><div class="stat-mod">−1</div></div>
-                        <div class="stat"><div class="stat-lbl-dark">ЛОВ</div><div class="stat-val">12</div><div class="stat-mod">+1</div></div>
-                        <div class="stat"><div class="stat-lbl-dark">ТЕЛ</div><div class="stat-val">11</div><div class="stat-mod">0</div></div>
-                        <div class="stat bump"><div class="stat-lbl-dark">ИНТ</div><div class="stat-val">17</div><div class="stat-mod">+3</div></div>
-                        <div class="stat"><div class="stat-lbl-dark">МУД</div><div class="stat-val">15</div><div class="stat-mod">+2</div></div>
-                        <div class="stat bump"><div class="stat-lbl-dark">ХАР</div><div class="stat-val">14</div><div class="stat-mod">+2</div></div>
-                    </div>
-                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ Расовый бонус: +1 Инт, +1 Хар</p>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title">ВНЕШНОСТЬ</div>
-                    <p style="font-size:12px; color:var(--fg-dim); line-height:1.55;">Тонкий, почти прозрачная кожа, под которой едва светятся вены. Глаза - темный провал без зрачков. Волосы угольно-черные с серебристыми кончиками. Двигается бесшумно; тень иногда запаздывает за движением.</p>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title">РАСОВЫЕ СПОСОБНОСТИ</div>
-                    <div class="ability-dark">
-                        <div class="ability-name">ТЕНЬ-ЗАХВАТ <span style="color:var(--fg-mute); font-size:10px;">(1/кор. отдых)</span></div>
-                        Захватываешь тень существа в 9 м. Спасбросок Мудрости СЛ 13. При провале - скорость цели 0 до конца ее следующего хода.
-                    </div>
-                    <div class="ability-dark">
-                        <div class="ability-name">ТЕНЕВОЕ ВОСПРИЯТИЕ <span style="color:var(--fg-mute); font-size:10px;">(пассив)</span></div>
-                        Темное зрение 12 м. В тусклом свете - преимущество на Восприятие.
-                    </div>
-                    <div class="ability-dark">
-                        <div class="ability-name">ЭХО ПАМЯТИ <span style="color:var(--fg-mute); font-size:10px;">(пассив)</span></div>
-                        Прикоснувшись к предмету, Инт проверка СЛ 15 - чувствуешь последнюю сильную эмоцию владельца.
-                    </div>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title">НАВЫКИ (ВСЕ)</div>
-                    <div class="pill-row">
-                        <span class="pill">История</span>
-                        <span class="pill">Анализ</span>
-                        <span class="pill" style="color:var(--dark); border-color:var(--dark)">Скрытность</span>
-                        <span class="pill" style="color:var(--dark); border-color:var(--dark)">Обман</span>
-                    </div>
-                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ фиолетовые - компетентность от класса</p>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title">ВЛАДЕНИЯ</div>
-                    <div class="kv"><span class="k">Доспехи</span><span class="v">Легкие</span></div>
-                    <div class="kv"><span class="k">Оружие</span><span class="v">Простое, метательное</span></div>
-                    <div class="kv"><span class="k">Прочее</span><span class="v">Воровские инструменты</span></div>
-                </div>
-
-                <div class="char-sec">
-                    <div class="char-sec-title">СНАРЯЖЕНИЕ</div>
-                    <div class="ability-dark">
-                        <div class="ability-name">Гитара</div>
-                        Бляяя рок. Урон 1d4 + мод. Ловкости.
-                    </div>
-                    <div class="ability-dark">
-                        <div class="ability-name">Шляпа <span style="color:var(--fg-mute); font-size:10px;">(фокусировка)</span></div>
-                        Ква-ква
-                    </div>
-                    <div class="pill-row">
-                        <span class="pill">Моток веревки (15 м)</span>
-                        <span class="pill">Старый компас</span>
-                        <span class="pill">Зажигалка</span>
-                    </div>
-                    <p class="dim" style="margin-top:6px; font-size:11px;">↑ Все предметы взяты → +0 монет Светлому</p>
-                </div>
-
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Fill-in hint -->
-    <h2 class="sec-title info">▶ КАК ЗАПОЛНИТЬ В БОТЕ</h2>
-
-    <div class="grid-2">
-        <div class="box">
-            <div class="box-title" style="color:var(--light)">СВЕТЛЫЙ</div>
-            <ul>
-                <li>Имя: <b>СВИНОПАХ КАКАШКИН</b></li>
-                <li>Макс. хиты: 7 · КД: 11</li>
-                <li>Характеристики: 8 · 12 · 11 · 16 · 15 · 13</li>
-                <li>Навыки → поставить: История, Анализ</li>
-                <li>Монеты: 10</li>
-                <li>Способности → добавить: «Наблюдательный»</li>
-                <li>Возраст: 13 <span style="color:var(--fg-mute)">(стоит по умолчанию)</span></li>
-            </ul>
-        </div>
-        <div class="box">
-            <div class="box-title" style="color:var(--dark)">ТЕМНЫЙ</div>
-            <ul>
-                <li>Имя: <b>МАРЧЕР</b></li>
-                <li>Основное → Тип: <b>Темный</b></li>
-                <li>Раса: МАРКА · Класс: ТЕНЕРОКЕР</li>
-                <li>Макс. хиты: 6 · Кости хитов: 1d6</li>
-                <li>Характеристики: 8 · 12 · 11 · 17 · 15 · 14</li>
-                <li>Навыки → История, Анализ, Скрытность, Обман</li>
-                <li>Оружие → Тень-клинок (+1 к поп., 1d4, колющий)</li>
-                <li>Способности → 3 расовые + «Наблюдательный»</li>
-            </ul>
-        </div>
-    </div>
-
-
-    <div style="margin-top:40px; padding-top:24px; border-top:2px dashed var(--border); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-        <button class="nav-item active" style="display:inline-flex; width:auto; box-shadow:4px 4px 0 var(--border);" data-art="intro">
-            <span class="nav-num">01</span>
-            <span class="nav-title">← Назад: Создание персонажа</span>
-        </button>
-    </div>
-
-</article>
-
+<main class="content" id="content-main">
+    <div class="loading">ЗАГРУЗКА...</div>
 </main>
+
 </div>
 
 <script>
-// ─── Navigation ────────────────────────────────────
-document.querySelectorAll('[data-art]').forEach(function(btn){
-    btn.addEventListener('click', function(){
-        var target = btn.dataset.art;
-        document.querySelectorAll('.nav-item[data-art]').forEach(function(b){
-            b.classList.toggle('active', b.dataset.art === target);
-        });
-        document.querySelectorAll('.article').forEach(function(a){
-            a.classList.toggle('visible', a.id === target);
-        });
-        var main = document.querySelector('.content');
-        if (main) main.scrollTop = 0;
-        window.scrollTo(0, 0);
-    });
-});
+// ─── Article filename parser ───────────────────────
+// Filename format:
+//   {num}_{name_with_underscores}.html         → обычная статья
+//   {num}_{name_with_underscores}_soon.html    → статья «скоро»
+function parseFilename(filename){
+    var base = filename.replace(/\.html$/i, '');
+    var m = base.match(/^(\d+)_(.+)$/);
+    if (!m) return null;
+    var num = m[1];
+    var rest = m[2];
+    var isSoon = false;
+    if (/_soon$/i.test(rest)) {
+        isSoon = true;
+        rest = rest.replace(/_soon$/i, '');
+    }
+    var title = rest.replace(/_/g, ' ');
+    return {
+        num: num,
+        title: title,
+        isSoon: isSoon,
+        filename: filename,
+        id: 'art-' + base   // безопасный id (не зависит от того, читается ли base как валидный)
+    };
+}
 
-// ─── Copy commands ─────────────────────────────────
+// ─── Show specific article ─────────────────────────
+function showArticle(id){
+    document.querySelectorAll('.nav-item[data-art]').forEach(function(b){
+        b.classList.toggle('active', b.dataset.art === id);
+    });
+    document.querySelectorAll('.article').forEach(function(a){
+        a.classList.toggle('visible', a.id === id);
+    });
+    var main = document.querySelector('.content');
+    if (main) main.scrollTop = 0;
+    window.scrollTo(0, 0);
+}
+
+// ─── Build sidebar nav button ──────────────────────
+function makeNavBtn(art, clickable){
+    var el = document.createElement(clickable ? 'button' : 'div');
+    el.className = 'nav-item' + (clickable ? '' : ' disabled');
+    if (clickable) {
+        el.dataset.art = art.id;
+        el.addEventListener('click', function(){ showArticle(art.id); });
+    }
+    var num = document.createElement('span');
+    num.className = 'nav-num';
+    num.textContent = art.num;
+    var ttl = document.createElement('span');
+    ttl.className = 'nav-title';
+    ttl.textContent = art.title;
+    el.appendChild(num);
+    el.appendChild(ttl);
+    return el;
+}
+
+// ─── Build prev/next footer for an article ────────
+function buildFooterNav(articles, currentIdx){
+    var prev = currentIdx > 0 ? articles[currentIdx - 1] : null;
+    var next = currentIdx < articles.length - 1 ? articles[currentIdx + 1] : null;
+    if (!prev && !next) return null;
+
+    var wrap = document.createElement('div');
+    wrap.style.cssText = 'margin-top:50px; padding-top:24px; border-top:2px dashed var(--border); display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;';
+
+    function makeLink(art, label){
+        var b = document.createElement('button');
+        b.className = 'nav-item active';
+        b.style.cssText = 'display:inline-flex; width:auto; box-shadow:4px 4px 0 var(--border);';
+        b.dataset.art = art.id;
+        b.addEventListener('click', function(){ showArticle(art.id); });
+        var num = document.createElement('span');
+        num.className = 'nav-num';
+        num.textContent = art.num;
+        var ttl = document.createElement('span');
+        ttl.className = 'nav-title';
+        ttl.textContent = label;
+        b.appendChild(num);
+        b.appendChild(ttl);
+        return b;
+    }
+
+    if (prev) wrap.appendChild(makeLink(prev, '← Назад: ' + prev.title));
+    else wrap.appendChild(document.createElement('span'));
+    if (next) wrap.appendChild(makeLink(next, 'Дальше: ' + next.title + ' →'));
+
+    return wrap;
+}
+
+// ─── Main loader ───────────────────────────────────
+async function loadArticles(){
+    var manifestResp;
+    try {
+        manifestResp = await fetch('articles.json', { cache: 'no-cache' });
+        if (!manifestResp.ok) throw new Error('HTTP ' + manifestResp.status);
+    } catch (e) {
+        showFatalError('Не удалось загрузить articles.json — ' + e.message +
+            '. Сайт нужно открывать через web-сервер (не через file://).');
+        return;
+    }
+    var manifest = await manifestResp.json();
+    var filenames = manifest.articles || [];
+
+    // Parse all and split active vs soon
+    var parsed = filenames.map(parseFilename).filter(function(x){ return x; });
+    // Sort by num so order is stable
+    parsed.sort(function(a,b){ return parseInt(a.num,10) - parseInt(b.num,10); });
+
+    var active = parsed.filter(function(p){ return !p.isSoon; });
+    var soon   = parsed.filter(function(p){ return p.isSoon; });
+
+    // ── Sidebar: active articles ──
+    var navActive = document.getElementById('nav-articles');
+    active.forEach(function(art){ navActive.appendChild(makeNavBtn(art, true)); });
+
+    // ── Sidebar: soon articles (disabled) ──
+    var navSoon = document.getElementById('nav-soon');
+    soon.forEach(function(art){ navSoon.appendChild(makeNavBtn(art, false)); });
+
+    // ── Load article HTML files ──
+    var contentMain = document.getElementById('content-main');
+    contentMain.innerHTML = ''; // clear loading state
+
+    for (var i = 0; i < active.length; i++) {
+        var art = active[i];
+        var articleEl = document.createElement('article');
+        articleEl.id = art.id;
+        articleEl.className = 'article' + (i === 0 ? ' visible' : '');
+        try {
+            var resp = await fetch(encodeURI(art.filename), { cache: 'no-cache' });
+            if (!resp.ok) throw new Error('HTTP ' + resp.status);
+            articleEl.innerHTML = await resp.text();
+        } catch (e) {
+            articleEl.innerHTML =
+                '<div class="load-error">Не удалось загрузить файл «' + art.filename + '»: ' + e.message + '</div>';
+        }
+        var footer = buildFooterNav(active, i);
+        if (footer) articleEl.appendChild(footer);
+        contentMain.appendChild(articleEl);
+    }
+
+    // No articles?
+    if (active.length === 0) {
+        contentMain.innerHTML = '<div class="loading">Нет доступных статей.</div>';
+    }
+}
+
+function showFatalError(msg){
+    var contentMain = document.getElementById('content-main');
+    contentMain.innerHTML = '<div class="load-error">' + msg + '</div>';
+}
+
+// ─── Copy commands (used by inline onclick in articles) ──
 function copyCmd(btn){
     var txt = btn.parentElement.querySelector('.cmd-text').textContent.trim();
     var ok = function(){
@@ -1205,7 +881,6 @@ function copyCmd(btn){
     };
     if (navigator.clipboard && navigator.clipboard.writeText){
         navigator.clipboard.writeText(txt).then(ok).catch(function(){
-            // fallback
             var ta = document.createElement('textarea');
             ta.value = txt; document.body.appendChild(ta); ta.select();
             try { document.execCommand('copy'); ok(); } catch(e){}
@@ -1219,6 +894,9 @@ function copyCmd(btn){
     }
 }
 window.copyCmd = copyCmd;
+
+// ─── Kick off ──────────────────────────────────────
+loadArticles();
 </script>
 <canvas id="scanlines"></canvas>
 <script>
@@ -1258,7 +936,7 @@ window.copyCmd = copyCmd;
     }
   }
 
-  window.addEventListener('resize', () => { resizeCanvas(); resizeScanlines(); });
+  window.addEventListener('resize', () => { resizeScanlines(); });
 resizeScanlines();
 drawScanlines();
 </script>
